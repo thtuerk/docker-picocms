@@ -1,0 +1,78 @@
+#!/usr/bin/with-contenv bash
+
+filename=`basename "$0"`
+
+##
+# If ${WEB_USER} and ${WEB_GROUP} already exists just skip the user creation
+##
+if id -u "$WEB_USER" > /dev/null 2>&1 && getent group "$WEB_GROUP"  > /dev/null 2>&1; then
+    echo "[cont-init.d] $filename: user:$WEB_USER and group:$WEB_GROUP already exists, skipping..."
+    exit 0
+fi
+
+
+##
+# Create user with $UID and  group with $GID
+##
+
+# If permissions were not defined get GID/UID from web files
+if [ -z "$UID" ]; then
+  UID=$(ls -n "$WEB_ROOT" | tail -n1 | xargs echo | cut -d' ' -f3)
+fi
+
+if [ -z "$GID" ]; then
+  GID=$(ls -n "$WEB_ROOT" | tail -n1 | xargs echo | cut -d' ' -f4)
+fi
+
+# If web files were owned by root use 100:101 as permissions instead
+if [ "$GID" = "0" ] ||  [ "$GID" = "" ]  || [ "$UID" = "0" ]; then
+
+  echo "[cont-init.d] $filename: ERROR: Your web root files are owned by root. I'm running processes as uid/gid 100:101 instead"
+
+  # These are default if container was accidentally mounted with root owned files
+  UID=100
+  GID=101
+fi
+
+echo "[cont-init.d] $filename: Creating $WEB_USER user with id: $UID and group $WEB_GROUP with id: $GID"
+
+# Create web group
+if [ -n "$GID" ]; then
+
+  # Check if group with $GID already exists
+  old_web_group=$(getent group $GID | cut -d':' -f1)
+
+  if [ -n "$old_web_group" ]; then
+
+    # Replace the existing group name to web
+    # This is done so that in local development we can just lookup permissions from mounted folders
+    # This UID/GID can be same as something already existing inside container
+    # This way we can use same uid/gid in container and host machine
+
+    echo "[cont-init.d] $filename: Replacing pre-existing group name $old_web_group -> $WEB_GROUP"
+    sed -i "s|$old_web_group|$WEB_GROUP|g" /etc/group
+
+    # We just changed this in /etc/group remember?
+    $old_web_group="$WEB_GROUP"
+
+  else
+    # Create new group
+    addgroup -g $GID $WEB_GROUP
+  fi
+else
+  echo "[cont-init.d] $filename: ERROR: Please set correct permissions into $WEB_ROOT" 1>&2
+  exit 2
+fi
+
+# Create new user
+if [ -n "$UID" ] && [ -n "$GID" ] ; then
+  web_user="$WEB_USER"
+  adduser -G $WEB_GROUP -u $UID -h $WEB_ROOT -SD $WEB_USER
+else
+  echo "[cont-init.d] $filename: ERROR: Please set correct permissions into $WEB_ROOT" 1>&2
+  exit 2
+fi
+
+# Check that processes can write logs
+chown "$WEB_USER":"$WEB_GROUP" /var/log
+chown -R "$WEB_USER":"$WEB_GROUP" "$WEB_ROOT"
