@@ -9,11 +9,6 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" &&
     php -r "unlink('composer-setup.php');" && \
     php composer.phar create-project picocms/pico-composer /opt/picocms
 WORKDIR /opt/picocms
-# # Install pico_edit plugin
-# RUN mkdir -p ./plugins/pico_edit
-# RUN git clone https://github.com/blocknotes/pico_edit.git ./plugins/pico_edit
-# RUN rm -rf ./plugins/pico_edit/.git/
-# RUN sed -i "s/''/'cc9fa8a98cb88dc915470d0b946d6f510f6dd6a16e435285781a9bf02c6d986d'/g" ./plugins/pico_edit/config.php
 
 FROM alpine:latest
 LABEL maintainer="bas.van.wetten@gmail.com"
