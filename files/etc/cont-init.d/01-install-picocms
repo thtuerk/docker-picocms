@@ -2,7 +2,7 @@
 
 filename=`basename "$0"`
 
-cp -a /opt/picocms/* $WEB_ROOT
+cp -r /opt/picocms/* $WEB_ROOT
     echo "[cont-init.d] $filename: copying PicoCMS files to $WEB_ROOT"
     exit 0
 fi

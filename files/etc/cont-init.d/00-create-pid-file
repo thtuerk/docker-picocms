@@ -2,8 +2,6 @@
 
 filename=`basename "$0"`
 
-# Allow different project root with clever symlink
-# This is used to trick drone CI to mount the files elsewhere than $PROJECT_ROOT
 if [ ! -f $NGINX_PID_FILE ]; then
     echo "[cont-init.d] $filename: nginx pid file does not exist yet....Creating $NGINX_PID_FILE"
     mkdir -p $(dirname $NGINX_PID_FILE)
