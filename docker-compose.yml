@@ -5,7 +5,7 @@ services:
   picocms:
     restart: always
     build: .
-    image: thtuerk/picocms
+    image: thomastuerk/picocms:latest
     ports:
       - 8080:80
     environment:
