@@ -2,7 +2,9 @@
 
 filename=`basename "$0"`
 
-cp -r /opt/picocms/* $WEB_ROOT
+if [ "$INSTALL_PICOCMS" = "YES" ]; then 
+    cp -r /opt/picocms/* $WEB_ROOT
     echo "[cont-init.d] $filename: copying PicoCMS files to $WEB_ROOT"
-    exit 0
+else
+    echo "[cont-init.d] $filename: skipped copying PicoCMS files to $WEB_ROOT"
 fi

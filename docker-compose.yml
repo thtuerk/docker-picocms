@@ -9,6 +9,7 @@ services:
     ports:
       - 8080:80
     environment:
+      - INSTALL_PICOCMS=YES
       - N_UID=1000
       - N_GID=1000
     volumes:
