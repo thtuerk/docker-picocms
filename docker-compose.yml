@@ -1,0 +1,16 @@
+version: "2"
+
+services:
+
+  picocms:
+    restart: always
+    build: .
+    image: thtuerk/picocms
+    ports:
+      - 8080:80
+    environment:
+      - N_UID=1000
+      - N_GID=1000
+    volumes:
+      - ./picocms:/var/www/picocms
+
