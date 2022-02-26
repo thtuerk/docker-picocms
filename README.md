@@ -30,8 +30,8 @@ If the environment variable `INSTALL_PICOCMS` is set to `YES` (the default), Pic
 This is usually fine, as it is uncommon to change existing PicoCMS files. However, if you intend to modify PicoCMS itself, remove the variable `ÌNSTALL_PICOCMS` from
 `docker-compose.yml` to prevent your changes from being overwritten. 
 
-Regardless of whether PicoCMS is installed, the owner of directory `./picocms` and all its files and subdictories is set to the user and group specified via the environemnt variables `N_UID` and `N_GID` specified in `docker-compose.yml`.
-Changing `N_UID` and `N_GID` to match your own user, simplifies editing. 
+Regardless of whether PicoCMS is installed, the owner of directory `./picocms` (and all its content) set to the user and group specified via `N_UID` and `N_GID`.
+The intention is to simplify editing by matching `N_UID` and `N_GID` with own, local user and group id. 
 
 ## Using PicoCMS
 

@@ -10,7 +10,9 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" &&
     php composer.phar --ignore-platform-reqs require picoauth/picoauth-theme -d /opt/picocms
 
 FROM alpine:latest
-LABEL maintainer="bas.van.wetten@gmail.com"
+LABEL maintainer="thomas@tuerk-brechen.de"
+
+ADD https://github.com/just-containers/s6-overlay/releases/download/v1.21.7.0/s6-overlay-amd64.tar.gz /tmp/
 
 RUN apk add --no-cache --update \
     bash \
@@ -36,7 +38,10 @@ RUN apk add --no-cache --update \
     # Remove cache and tmp files
     rm -rf /var/cache/apk/* && \
     # Create Folders
-    mkdir -p /var/www/nginx
+    mkdir -p /var/www/nginx && \
+    # unpack s6
+    tar xzf /tmp/s6-overlay-amd64.tar.gz -C / && \
+    rm /tmp/s6-overlay-amd64.tar.gz
 
 COPY --from=picocms /opt/picocms /opt/picocms
 COPY /files /
@@ -49,9 +54,6 @@ ENV NGINX_PID_FILE="/var/run/nginx/nginx.pid" \
     NGINX_MAX_BODY_SIZE="64M" \
     NGINX_FASTCGI_TIMEOUT="30" \
     PHP_MEMORY_LIMIT="256M"
-
-ADD https://github.com/just-containers/s6-overlay/releases/download/v1.21.7.0/s6-overlay-amd64.tar.gz /tmp/
-RUN tar xzf /tmp/s6-overlay-amd64.tar.gz -C /
 
 VOLUME /var/www/picocms
 
