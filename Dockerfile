@@ -6,8 +6,7 @@ WORKDIR /opt
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
     php composer-setup.php && \
     php -r "unlink('composer-setup.php');" && \
-    php composer.phar --ignore-platform-reqs create-project picocms/pico-composer /opt/picocms && \
-    php composer.phar --ignore-platform-reqs require picoauth/picoauth-theme -d /opt/picocms
+    php composer.phar --ignore-platform-reqs create-project picocms/pico-composer /opt/picocms
 
 FROM alpine:latest
 LABEL maintainer="thomas@tuerk-brechen.de"
