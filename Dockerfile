@@ -1,11 +1,12 @@
-# Install PHP composer
 FROM php:latest as picocms
 RUN apt-get update && apt-get install -y git unzip
 RUN mkdir -p /opt/picocms
 WORKDIR /opt
+
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
     php composer-setup.php && \
     php -r "unlink('composer-setup.php');" && \
+    php composer.phar config --global --no-plugins allow-plugins.picocms/composer-installer true && \
     php composer.phar --ignore-platform-reqs create-project picocms/pico-composer /opt/picocms
 
 FROM alpine:latest
@@ -16,7 +17,7 @@ ADD https://github.com/just-containers/s6-overlay/releases/download/v1.21.7.0/s6
 RUN apk add --no-cache --update \
     bash \
     nginx \
-    php7 php7-fpm php7-iconv php7-openssl php7-phar php7-json php7-dom php7-mbstring php7-session \
+    php81 php81-fpm php81-iconv php81-openssl php81-phar php81-json php81-dom php81-mbstring php81-session \
     gettext && \
     # No need for the default configs
     rm -f /etc/php/php-fpm.d/www.conf && \
@@ -25,10 +26,10 @@ RUN apk add --no-cache --update \
     mkdir -p /var/log/nginx && \
     mkdir -p /tmp/nginx/body && \
     # Small fixes to php & nginx
-    ln -s /etc/php7 /etc/php && \
-    ln -s /usr/sbin/php-fpm7 /usr/bin/php-fpm && \
-    ln -s /usr/lib/php7 /usr/lib/php && \
-    rm -rf /var/log/php7 && \
+    ln -s /etc/php81 /etc/php && \
+    ln -s /usr/sbin/php-fpm81 /usr/bin/php-fpm && \
+    ln -s /usr/lib/php81 /usr/lib/php && \
+    # rm -rf /var/log/php81 && \
     mkdir -p /var/log/php/ && \
     # No need for the default configs
     rm -f /etc/php/php-fpm.d/www.conf && \

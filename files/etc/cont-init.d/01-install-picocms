@@ -8,3 +8,5 @@ if [ "$INSTALL_PICOCMS" = "YES" ]; then
 else
     echo "[cont-init.d] $filename: skipped copying PicoCMS files to $WEB_ROOT"
 fi
+
+echo "BBB"
